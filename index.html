@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+  <title>Number Guessing Game</title>
+  <style>
+  *{
+    font-family: vazirmatn !important;
+    box-sizing: border-box;
+  }
+  body{
+    direction: rtl;
+   background: linear-gradient(120deg,#076585,#FFF);
+    height: 96.5vh;
+  }
+  .numb{
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #C0C0C0;
+    outline: none;
+    margin: 0 .35rem;
+  }
+  ::placeholder{
+    color: #000;
+  }
+  .game_area{
+      margin: 1rem 0;
+    }
+  button{
+      width: 100%;
+      padding: .4rem 0;
+      font-weight: bold;
+    }
+  p{
+      line-height: 1.8rem;
+    }
+  .message{
+    text-align: center;
+    color: #FFF;
+  }
+  .info{
+    background-color: #333;
+    border-radius: .25rem;
+    padding: .25rem .45rem;
+    font-size: 12px;
+  }
+  .alert{
+    padding: .25rem 0;
+    border-radius: .25rem;
+  }
+  .alert_danger{
+    background: linear-gradient(to right,#F31,#F01);
+  }
+  .alert_success{
+    background: linear-gradient(to left,#33FF66,#33FF99);
+    color: #333;
+  }
+  details{
+    color: #FFF;
+    margin: 1rem 0;
+  }
+  </style>
+</head>
+<body>
+  <p id="message" class="message"></p>
+  <div class="game_area"></div>
+  <button type="button">شروع بازی</button>
+  <details>
+    <summary>
+      راهنمایی
+    </summary>
+      <p class="info">
+    اگر پس زمینه آبی بود عدد وارد شده کمتر از عدد سیستم است اگر قرمز بود عدد بیشتر است اگرهم سبز بود عدد درست است .
+  </p>
+  </details>
+</body>
+<script>
+  function getElem(element){
+  return document.querySelector(element);
+  };
+  function getElemAll(element){
+  return document.querySelectorAll(element);
+  };
+  const game_area=getElem(".game_area");
+  const message=getElem("#message");
+  const btnStart=getElem("button");
+  let gamePlay=false;
+  let scor=0;
+  let guessLeft=10;
+  btnStart.addEventListener("click",(e)=>{
+    if(!gamePlay){
+      gamePlay=true;
+      game_area.innerHTML="";
+      scor=0;
+      btnStart.innerHTML="ثبت کن";
+      message.innerHTML="حدس بزنید ";
+      message.classList.remove("alert_danger");
+      message.classList.remove("alert_success");
+      Maker(6);
+    }else{
+      const numbers=getElemAll(".numb");
+      let len=numbers.length;
+      scor++;
+      guessLeft--;
+    message.innerHTML=` تعداد حدس های شما  " ${scor} " فرصت باقی مانده 
+    " ${guessLeft} "`
+    if(guessLeft<=0){
+      GameLows();
+    }
+      let win=0;
+      for(let n=0; n<len; n++){
+        if(numbers[n].value == numbers[n].correct){
+        numbers[n].style.background="green";
+        numbers[n].style.color="#FFF";
+        win++;
+        }else{
+          let bgColor=(numbers[n].value<numbers[n].correct) ? "#00CCFF" : "red";
+         numbers[n].style.background=bgColor;
+        }
+        if(win==len){
+          GameOver();
+        }
+      }
+    }
+  });
+  function GameOver(){
+    message.innerHTML=` تعداد حدس های شما  " ${scor} " شما برنده شدید `
+    message.classList.add("alert_success","alert")
+    btnStart.innerHTML="شروع مجدد بازی";
+    gamePlay=false;
+    guessLeft=10;
+  }
+  function GameLows(){
+    message.innerHTML="فرصت حدس شما به اتمام رسید شما بازنده شدید  ";
+    message.classList.add("alert_danger","alert")
+    btnStart.innerHTML="شروع مجدد بازی";
+    guessLeft=10;
+    gamePlay=false;
+  }
+  function Maker(count){
+   for(let i=0; i<count; i++){
+    let el=document.createElement("input");
+    el.type="number";
+    el.max=9;
+    el.min=0;
+    el.size=1;
+    el.style.width="50px";
+    el.classList.add("numb");
+    el.correct=Math.floor(Math.random()*10);
+    el.placeholder="0";
+    el.order=i;
+    game_area.appendChild(el);
+   }
+  }
+</script>
+</html>
